@@ -2,13 +2,10 @@
   headerName: 'Name',
   field: 'name',
   editable: true,
-  cellEditor: 'popupEditor'
-}
-{
-  headerName: 'Name',
-  field: 'name',
-  editable: true,
-  cellEditor: 'popupEditor'
+  cellEditor: 'popupEditor',
+  cellEditorParams: {
+    component: 'popupEditorComponent'
+  }
 }
 
 import { Component } from '@angular/core';
@@ -46,6 +43,10 @@ export class PopupEditorComponent implements ICellEditorAngularComp {
     return this.value;
   }
 
+  isPopup(): boolean {
+    return true;
+  }
+
   onEnter(): void {
     this.params.stopEditing();
   }
@@ -54,7 +55,6 @@ export class PopupEditorComponent implements ICellEditorAngularComp {
     this.params.stopEditing(true);
   }
 }
-
 
 import { NgModule } from '@angular/core';
 import { AgGridModule } from 'ag-grid-angular';
@@ -66,32 +66,27 @@ import { PopupEditorComponent } from './popup-editor.component';
 })
 export class AppModule { }
 
-
 import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-grid',
   template: `
-    <ag-grid-angular [rowData]="rowData" [columnDefs]="columnDefs" [gridOptions]="gridOptions">
+    <ag-grid-angular [rowData]="rowData" [columnDefs]="columnDefs" [frameworkComponents]="frameworkComponents">
     </ag-grid-angular>
   `
 })
 export class GridComponent {
   rowData: any[];
   columnDefs: any[];
-  gridOptions: any;
+  frameworkComponents: any;
 
   constructor() {
     this.rowData = /* your row data */;
     this.columnDefs = [
       // Column definitions including the one with the custom editor
     ];
-    this.gridOptions = {
-      // Other grid options
-      defaultColDef: {
-        // Set the custom editor component for popup editing
-        cellEditorFramework: 'popupEditor'
-      }
+    this.frameworkComponents = {
+      popupEditorComponent: PopupEditorComponent
     };
   }
 }
