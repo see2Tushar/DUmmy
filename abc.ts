@@ -1,73 +1,40 @@
-import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Injectable } from '@angular/core';
+import { CanDeactivate } from '@angular/router';
+import { Observable } from 'rxjs';
 
-@Component({
-  selector: 'app-edit-dialog',
-  template: `
-    <h2>Edit Value</h2>
-    <input [(ngModel)]="data.value" />
-    <button mat-raised-button color="primary" (click)="save()">Save</button>
-    <button mat-raised-button (click)="close()">Cancel</button>
-  `,
-})
-export class EditDialogComponent {
-  constructor(
-    public dialogRef: MatDialogRef<EditDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
-  ) {}
+export interface CanComponentDeactivate {
+  canDeactivate: () => Observable<boolean> | Promise<boolean> | boolean;
+}
 
-  save(): void {
-    this.dialogRef.close(this.data.value);
-  }
-
-  close(): void {
-    this.dialogRef.close();
+@Injectable()
+export class UnsavedChangesGuard implements CanDeactivate<CanComponentDeactivate> {
+  canDeactivate(component: CanComponentDeactivate): Observable<boolean> | Promise<boolean> | boolean {
+    return component.canDeactivate ? component.canDeactivate() : true;
   }
 }
 
 
-MatDialogModule
-
 import { Component } from '@angular/core';
-import { ICellRendererAngularComp } from 'ag-grid-angular';
-import { MatDialog } from '@angular/material/dialog';
-import { EditDialogComponent } from './edit-dialog.component';
+import { CanComponentDeactivate } from '../unsaved-changes.guard';
+import { Observable } from 'rxjs';
 
 @Component({
-  selector: 'app-edit-cell-renderer',
-  template: `
-    <div (click)="openDialog()">{{ value }}</div>
-  `,
+  selector: 'app-my-component',
+  templateUrl: './my-component.component.html',
+  styleUrls: ['./my-component.component.css']
 })
-export class EditCellRendererComponent implements ICellRendererAngularComp {
-  public value: any;
-  private params: any;
+export class MyComponent implements CanComponentDeactivate {
+  unsavedChanges = false;
 
-  constructor(private dialog: MatDialog) {}
-
-  agInit(params: any): void {
-    this.params = params;
-    this.value = params.value;
-  }
-
-  refresh(params: any): boolean {
-    this.params = params;
-    this.value = params.value;
+  // This method will be called by the guard
+  canDeactivate(): Observable<boolean> | Promise<boolean> | boolean {
+    if (this.unsavedChanges) {
+      return confirm('You have unsaved changes. Do you want to leave?');
+    }
     return true;
   }
 
-  openDialog(): void {
-    const dialogRef = this.dialog.open(EditDialogComponent, {
-      width: '250px',
-      data: { value: this.value },
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result !== undefined) {
-        this.value = result;
-        this.params.data[this.params.colDef.field] = result;
-        this.params.api.refreshCells();
-      }
-    });
-  }
+  // Other methods and logic of your component
 }
+
+
