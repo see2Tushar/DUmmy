@@ -34,7 +34,26 @@ unsavedChanges = false;
   // This method will be called by the guard
   canDeactivate(): Observable<boolean> | Promise<boolean> | boolean {
     if (this.unsavedChanges) {
-      return confirm('You have unsaved changes. Do you want to leave?');
+      return new Observable<boolean>(observer => {
+        const confirmation = confirm('You have unsaved changes. Do you want to leave?');
+        if (confirmation) {
+          // Perform your save logic here
+          this.saveChanges().subscribe(
+            () => {
+              observer.next(true);
+              observer.complete();
+            },
+            error => {
+              console.error('Error saving changes:', error);
+              observer.next(false);
+              observer.complete();
+            }
+          );
+        } else {
+          observer.next(false);
+          observer.complete();
+        }
+      });
     }
     return true;
   }
