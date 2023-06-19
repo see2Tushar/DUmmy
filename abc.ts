@@ -1,106 +1,55 @@
-import { Injectable } from '@angular/core';
-import { CanDeactivate } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Component } from '@angular/core';
+import { AgEditorComponent } from 'ag-grid-angular';
 
-export interface CanComponentDeactivate {
-  canDeactivate: () => Observable<boolean> | Promise<boolean> | boolean;
-}
+@Component({
+  selector: 'app-custom-select-cell-editor',
+  template: `
+    <select [disabled]="!shouldOpenEditor" (keydown)="onKeyDown($event)">
+      <option *ngFor="let option of values" [value]="option">{{ option }}</option>
+    </select>
+  `
+})
+export class CustomSelectCellEditor implements AgEditorComponent {
+  shouldOpenEditor: boolean;
+  values: any[];
 
-@Injectable()
-export class UnsavedChangesGuard implements CanDeactivate<CanComponentDeactivate> {
-  canDeactivate(component: CanComponentDeactivate): Observable<boolean> | Promise<boolean> | boolean {
-    return component.canDeactivate ? component.canDeactivate() : true;
+  agInit(params: any): void {
+    this.shouldOpenEditor = params.shouldOpenEditor;
+    this.values = params.values;
+  }
+
+  getValue(): any {
+    // Return the selected value or any other logic as needed
+    // For example, you can return the selected value from the select element
+    return 'TODO: Implement getValue()';
+  }
+
+  onKeyDown(event: KeyboardEvent): void {
+    // Handle key events if required
   }
 }
-import { Injectable } from '@angular/core';
-import { CanDeactivate } from '@angular/router';
-import { Observable } from 'rxjs';
 
-export interface CanComponentDeactivate {
-  canDeactivate: () => Observable<boolean> | Promise<boolean> | boolean;
-}
 
-@Injectable()
-export class UnsavedChangesGuard implements CanDeactivate<CanComponentDeactivate> {
-  canDeactivate(component: CanComponentDeactivate): Observable<boolean> | Promise<boolean> | boolean {
-    return component.canDeactivate ? component.canDeactivate() : true;
-  }
-}
-
-implements CanComponentDeactivate
-
-unsavedChanges = false;
-
-  // This method will be called by the guard
-  canDeactivate(): Observable<boolean> | Promise<boolean> | boolean {
-    if (this.unsavedChanges) {
-      return new Observable<boolean>(observer => {
-        const confirmation = confirm('You have unsaved changes. Do you want to leave?');
-        if (confirmation) {
-          // Perform your save logic here
-          this.saveChanges().subscribe(
-            () => {
-              observer.next(true);
-              observer.complete();
-            },
-            error => {
-              console.error('Error saving changes:', error);
-              observer.next(false);
-              observer.complete();
-            }
-          );
-        } else {
-          observer.next(false);
-          observer.complete();
-        }
-      });
+const columnDefs = [
+  {
+    headerName: 'Country',
+    field: 'country',
+    cellEditor: 'customSelectCellEditor',
+    cellEditorParams: {
+      values: ['USA', 'Canada', 'UK', 'Australia'],
+      shouldOpenEditor: true // Provide the condition flag to the cell editor
     }
-    return true;
-  }
+  },
+  // Other column definitions...
+];
 
-  const routes: Routes = [
-    {
-      path: 'my-component',
-      component: MyComponent,
-      canDeactivate: [UnsavedChangesGuard]
-    },
-    // Other routes
-  ];
 
-  canDeactivate(): Observable<boolean> | Promise<boolean> | boolean {
-    if (this.unsavedChanges) {
-      return new Observable<boolean>(observer => {
-        const confirmation = confirm('You have unsaved changes. Do you want to leave?');
-        if (confirmation) {
-          // Perform your save logic here
-          this.saveChanges().subscribe(
-            () => {
-              observer.next(true);
-              observer.complete();
-            },
-            error => {
-              console.error('Error saving changes:', error);
-              observer.next(false);
-              observer.complete();
-            }
-          );
-        } else {
-          observer.next(false);
-          observer.complete();
-        }
-      });
-    }
-    return true;
-  }
+import { NgModule } from '@angular/core';
+import { AgGridModule } from 'ag-grid-angular';
+import { CustomSelectCellEditor } from './custom-select-cell-editor.component';
 
-  saveChanges(): Observable<any> {
-    // Implement your save logic here, e.g., making an HTTP request
-    // Return an observable that represents the save operation
-    return new Observable<any>(observer => {
-      // Simulate a delay and then emit a success response
-      setTimeout(() => {
-        observer.next('Save successful');
-        observer.complete();
-      }, 2000);
-    });
-  }
+@NgModule({
+  declarations: [CustomSelectCellEditor],
+  imports: [AgGridModule.withComponents([CustomSelectCellEditor])]
+})
+export class AppModule { }
