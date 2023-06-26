@@ -1,14 +1,38 @@
-.toggle-option input[value="option1"]:checked + .toggle-slider {
-  transform: translateX(0);
-  background-color: red;
+providers: [
+  {
+    provide: NG_VALUE_ACCESSOR,
+    useExisting: forwardRef(() => ThreeWayToggleComponent),
+    multi: true
+  }
+]
+
+implements ControlValueAccessor
+
+private onChange: (value: any) => void;
+private onTouched: () => void;
+
+writeValue(value: any): void {
+  this.toggleValue = value;
 }
 
-.toggle-option input[value="option2"]:checked + .toggle-slider {
-  transform: translateX(60px);
-  background-color: gray;
+registerOnChange(fn: (value: any) => void): void {
+  this.onChange = fn;
 }
 
-.toggle-option input[value="option3"]:checked + .toggle-slider {
-  transform: translateX(120px);
-  background-color: green;
+registerOnTouched(fn: () => void): void {
+  this.onTouched = fn;
+}
+
+setDisabledState(isDisabled: boolean): void {
+  // Optional: Implement if you want to handle disabling of the component
+}
+
+onToggleChange(value: string) {
+  this.toggleValue = value;
+  if (this.onChange) {
+    this.onChange(value);
+  }
+  if (this.onTouched) {
+    this.onTouched();
+  }
 }
