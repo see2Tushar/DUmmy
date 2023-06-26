@@ -1,53 +1,48 @@
-import { Component, Input } from '@angular/core';
+.toggle-container {
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 34px;
+}
 
-@Component({
-  selector: 'app-three-way-toggle',
-  template: `
-    <div class="toggle-container">
-      <label class="toggle-option">
-        <input
-          type="radio"
-          [value]="'option1'"
-          [checked]="toggleValue === 'option1'"
-          (change)="onToggleChange($event.target.value)"
-        />
-        Option 1
-      </label>
-      <label class="toggle-option">
-        <input
-          type="radio"
-          [value]="'option2'"
-          [checked]="toggleValue === 'option2'"
-          (change)="onToggleChange($event.target.value)"
-        />
-        Option 2
-      </label>
-      <label class="toggle-option">
-        <input
-          type="radio"
-          [value]="'option3'"
-          [checked]="toggleValue === 'option3'"
-          (change)="onToggleChange($event.target.value)"
-        />
-        Option 3
-      </label>
-    </div>
-  `,
-  styles: [`
-    .toggle-container {
-      display: flex;
-    }
+.toggle-option {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  margin: 0;
+  position: relative;
+  cursor: pointer;
+}
 
-    .toggle-option {
-      margin-right: 10px;
-    }
-  `]
-})
-export class ThreeWayToggleComponent {
-  @Input() toggleId: string;
-  toggleValue: string = 'option1';
+.toggle-slider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: background-color 0.2s;
+}
 
-  onToggleChange(value: string) {
-    this.toggleValue = value;
-  }
+.toggle-option input {
+  display: none;
+}
+
+.toggle-option input:checked + .toggle-slider {
+  background-color: #2196f3;
+}
+
+.toggle-option input:checked + .toggle-slider::before {
+  transform: translateX(46px);
+}
+
+.toggle-slider::before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  bottom: 2px;
+  width: 28px;
+  background-color: #fff;
+  transition: transform 0.2s;
 }
