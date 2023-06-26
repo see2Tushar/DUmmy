@@ -1,27 +1,53 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
-  selector: 'app-slider',
+  selector: 'app-three-way-toggle',
   template: `
-    <mat-slider thumbLabel tickInterval="1" [(ngModel)]="value" min="0" max="2" class="custom-slider"></mat-slider>
-    <div class="labels">
-      <span>Low</span>
-      <span>Medium</span>
-      <span>High</span>
+    <div class="toggle-container">
+      <label class="toggle-option">
+        <input
+          type="radio"
+          [value]="'option1'"
+          [checked]="toggleValue === 'option1'"
+          (change)="onToggleChange($event.target.value)"
+        />
+        Option 1
+      </label>
+      <label class="toggle-option">
+        <input
+          type="radio"
+          [value]="'option2'"
+          [checked]="toggleValue === 'option2'"
+          (change)="onToggleChange($event.target.value)"
+        />
+        Option 2
+      </label>
+      <label class="toggle-option">
+        <input
+          type="radio"
+          [value]="'option3'"
+          [checked]="toggleValue === 'option3'"
+          (change)="onToggleChange($event.target.value)"
+        />
+        Option 3
+      </label>
     </div>
   `,
   styles: [`
-    .custom-slider .mat-slider-track-wrapper {
-      background-image: linear-gradient(to right, red, gray, green);
-    }
-    
-    .labels {
+    .toggle-container {
       display: flex;
-      justify-content: space-between;
-      margin-top: 16px;
+    }
+
+    .toggle-option {
+      margin-right: 10px;
     }
   `]
 })
-export class SliderComponent {
-  value: number = 1;
+export class ThreeWayToggleComponent {
+  @Input() toggleId: string;
+  toggleValue: string = 'option1';
+
+  onToggleChange(value: string) {
+    this.toggleValue = value;
+  }
 }
