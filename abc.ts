@@ -1,38 +1,21 @@
-providers: [
-  {
-    provide: NG_VALUE_ACCESSOR,
-    useExisting: forwardRef(() => ThreeWayToggleComponent),
-    multi: true
-  }
-]
-
-implements ControlValueAccessor
-
-private onChange: (value: any) => void;
-private onTouched: () => void;
-
-writeValue(value: any): void {
-  this.toggleValue = value;
+/* Customize the ag-Grid scroll bars */
+.ag-scroller::-webkit-scrollbar {
+  width: 10px;
 }
 
-registerOnChange(fn: (value: any) => void): void {
-  this.onChange = fn;
+.ag-scroller::-webkit-scrollbar-thumb {
+  background-color: #555;
+  border-radius: 5px;
 }
 
-registerOnTouched(fn: () => void): void {
-  this.onTouched = fn;
+.ag-scroller::-webkit-scrollbar-thumb:hover {
+  background-color: #888;
 }
 
-setDisabledState(isDisabled: boolean): void {
-  // Optional: Implement if you want to handle disabling of the component
+.ag-scroller::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
 }
 
-onToggleChange(value: string) {
-  this.toggleValue = value;
-  if (this.onChange) {
-    this.onChange(value);
-  }
-  if (this.onTouched) {
-    this.onTouched();
-  }
+.ag-scroller::-webkit-scrollbar-track:hover {
+  background-color: #d4d4d4;
 }
