@@ -1,21 +1,89 @@
-/* Customize the ag-Grid scroll bars */
-.ag-scroller::-webkit-scrollbar {
-  width: 10px;
+import { Component } from '@angular/core';
+
+@Component({
+  template: `
+    <span [class.highlight-cell]="params.value === 'completed'">
+      {{ params.value }}
+    </span>
+  `,
+  styles: [
+    `
+    .highlight-cell {
+      background-color: yellow;
+    }
+    `
+  ]
+})
+export class StatusCellRendererComponent {
+  params: any;
+
+  agInit(params: any): void {
+    this.params = params;
+  }
 }
 
-.ag-scroller::-webkit-scrollbar-thumb {
-  background-color: #555;
-  border-radius: 5px;
+
+
+import { Component } from '@angular/core';
+import { StatusCellRendererComponent } from './status-cell-renderer.component';
+
+@Component({
+  selector: 'app-root',
+  template: `
+    <ag-grid-angular
+      style="width: 100%; height: 500px"
+      class="ag-theme-alpine"
+      [rowData]="rowData"
+      [columnDefs]="columnDefs"
+      [frameworkComponents]="frameworkComponents"
+      [getRowClass]="getRowClass"
+    ></ag-grid-angular>
+  `,
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent {
+  rowData = [
+    { id: 1, name: 'John', status: 'completed' },
+    { id: 2, name: 'Jane', status: 'in-progress' },
+    { id: 3, name: 'Bob', status: 'completed' },
+    { id: 4, name: 'Alice', status: 'in-progress' }
+  ];
+
+  columnDefs = [
+    { headerName: 'ID', field: 'id' },
+    { headerName: 'Name', field: 'name' },
+    {
+      headerName: 'Status',
+      field: 'status',
+      cellRenderer: 'statusCellRenderer'
+    }
+  ];
+
+  frameworkComponents = {
+    statusCellRenderer: StatusCellRendererComponent
+  };
+
+  getRowClass(params: any): string {
+    if (params.data.status === 'completed') {
+      return 'highlight-row';
+    }
+    return '';
+  }
 }
 
-.ag-scroller::-webkit-scrollbar-thumb:hover {
-  background-color: #888;
-}
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { AgGridModule } from 'ag-grid-angular';
 
-.ag-scroller::-webkit-scrollbar-track {
-  background-color: #f1f1f1;
-}
+import { AppComponent } from './app.component';
+import { StatusCellRendererComponent } from './status-cell-renderer.component';
 
-.ag-scroller::-webkit-scrollbar-track:hover {
-  background-color: #d4d4d4;
-}
+@NgModule({
+  declarations: [AppComponent, StatusCellRendererComponent], // Add your custom cell renderer component
+  imports: [
+    BrowserModule,
+    AgGridModule.withComponents([StatusCellRendererComponent]) // Add your custom cell renderer component to the withComponents array
+  ],
+  bootstrap: [AppComponent]
+})
+export class AppModule {}
