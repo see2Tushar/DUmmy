@@ -1,89 +1,41 @@
-import { Component } from '@angular/core';
+it('should return false', () => {
+    const component = new GridCheckboxComponent();
+    const params = {};
 
-@Component({
-  template: `
-    <span [class.highlight-cell]="params.value === 'completed'">
-      {{ params.value }}
-    </span>
-  `,
-  styles: [
-    `
-    .highlight-cell {
-      background-color: yellow;
-    }
-    `
-  ]
-})
-export class StatusCellRendererComponent {
-  params: any;
+    const result = component.refresh(params);
 
-  agInit(params: any): void {
-    this.params = params;
-  }
-}
+    expect(result).toBe(false);
+});
 
+it('should initialize params property with provided parameters', () => {
+    const component = new GridCheckboxComponent();
+    const params = { column: { colId: 'columnId' } };
+    component.agInit(params);
+    expect(component.params).toBe(params);
+});
 
+it('should set the default value for the specified column in the node', () => {
+    const component = new GridCheckboxComponent();
+    const params = {
+        column: { colId: 'columnId' },
+        node: {
+            setDefaultValue: jest.fn()
+        }
+    };
+    const event = { target: { checked: true } };
+    
+    component.params = params;
+    component.checkHandler(event);
 
-import { Component } from '@angular/core';
-import { StatusCellRendererComponent } from './status-cell-renderer.component';
+    expect(params.node.setDefaultValue).toHaveBeenCalledWith('columnId', true);
+});
 
-@Component({
-  selector: 'app-root',
-  template: `
-    <ag-grid-angular
-      style="width: 100%; height: 500px"
-      class="ag-theme-alpine"
-      [rowData]="rowData"
-      [columnDefs]="columnDefs"
-      [frameworkComponents]="frameworkComponents"
-      [getRowClass]="getRowClass"
-    ></ag-grid-angular>
-  `,
-  styleUrls: ['./app.component.css']
-})
-export class AppComponent {
-  rowData = [
-    { id: 1, name: 'John', status: 'completed' },
-    { id: 2, name: 'Jane', status: 'in-progress' },
-    { id: 3, name: 'Bob', status: 'completed' },
-    { id: 4, name: 'Alice', status: 'in-progress' }
-  ];
+it('should prevent the default event behavior', () => {
+    const component = new GridCheckboxComponent();
+    const event = { target: { checked: true }, preventDefault: jest.fn() };
+    
+    component.checkHandler(event);
 
-  columnDefs = [
-    { headerName: 'ID', field: 'id' },
-    { headerName: 'Name', field: 'name' },
-    {
-      headerName: 'Status',
-      field: 'status',
-      cellRenderer: 'statusCellRenderer'
-    }
-  ];
+    expect(event.preventDefault).toHaveBeenCalled();
+});
 
-  frameworkComponents = {
-    statusCellRenderer: StatusCellRendererComponent
-  };
-
-  getRowClass(params: any): string {
-    if (params.data.status === 'completed') {
-      return 'highlight-row';
-    }
-    return '';
-  }
-}
-
-import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-import { AgGridModule } from 'ag-grid-angular';
-
-import { AppComponent } from './app.component';
-import { StatusCellRendererComponent } from './status-cell-renderer.component';
-
-@NgModule({
-  declarations: [AppComponent, StatusCellRendererComponent], // Add your custom cell renderer component
-  imports: [
-    BrowserModule,
-    AgGridModule.withComponents([StatusCellRendererComponent]) // Add your custom cell renderer component to the withComponents array
-  ],
-  bootstrap: [AppComponent]
-})
-export class AppModule {}
