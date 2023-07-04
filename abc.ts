@@ -1,41 +1,52 @@
-it('should return false', () => {
-    const component = new GridCheckboxComponent();
-    const params = {};
+import { GridCheckboxComponent } from './GridCheckboxComponent';
 
-    const result = component.refresh(params);
+describe('GridCheckboxComponent', () => {
+  let component: GridCheckboxComponent;
 
-    expect(result).toBe(false);
-});
+  beforeEach(() => {
+    component = new GridCheckboxComponent();
+  });
 
-it('should initialize params property with provided parameters', () => {
-    const component = new GridCheckboxComponent();
-    const params = { column: { colId: 'columnId' } };
-    component.agInit(params);
-    expect(component.params).toBe(params);
-});
+  describe('agInit', () => {
+    it('should initialize params property with provided parameters', () => {
+      const params = { column: { colId: 'columnId' } };
+      component.agInit(params);
+      expect(component.params).toBe(params);
+    });
+  });
 
-it('should set the default value for the specified column in the node', () => {
-    const component = new GridCheckboxComponent();
-    const params = {
+  describe('checkHandler', () => {
+    it('should set the default value for the specified column in the node', () => {
+      const params = {
         column: { colId: 'columnId' },
         node: {
-            setDefaultValue: jest.fn()
+          setDefaultValue: jasmine.createSpy('setDefaultValue')
         }
-    };
-    const event = { target: { checked: true } };
-    
-    component.params = params;
-    component.checkHandler(event);
+      };
+      const event = { target: { checked: true } };
 
-    expect(params.node.setDefaultValue).toHaveBeenCalledWith('columnId', true);
+      component.params = params;
+      component.checkHandler(event);
+
+      expect(params.node.setDefaultValue).toHaveBeenCalledWith('columnId', true);
+    });
+
+    it('should prevent the default event behavior', () => {
+      const event = { target: { checked: true }, preventDefault: jasmine.createSpy('preventDefault') };
+
+      component.checkHandler(event);
+
+      expect(event.preventDefault).toHaveBeenCalled();
+    });
+  });
+
+  describe('refresh', () => {
+    it('should return false', () => {
+      const params = {};
+
+      const result = component.refresh(params);
+
+      expect(result).toBe(false);
+    });
+  });
 });
-
-it('should prevent the default event behavior', () => {
-    const component = new GridCheckboxComponent();
-    const event = { target: { checked: true }, preventDefault: jest.fn() };
-    
-    component.checkHandler(event);
-
-    expect(event.preventDefault).toHaveBeenCalled();
-});
-
