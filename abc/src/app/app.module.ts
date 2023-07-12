@@ -10,11 +10,15 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { GridComponent } from './grid/grid.component';
+import { PopupGridComponent } from './popup-grid/popup-grid.component';
+import {MatDialogModule} from '@angular/material/dialog';
+import {MatListModule} from '@angular/material/list';
 
 @NgModule({
   declarations: [
     AppComponent,
-    GridComponent
+    GridComponent,
+    PopupGridComponent
   ],
   imports: [
     BrowserModule,
@@ -24,7 +28,9 @@ import { GridComponent } from './grid/grid.component';
   MatButtonModule,
   MatIconModule,
   MatInputModule,
+  MatDialogModule,
   FormsModule,
+  MatListModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
+import { PopupGridComponent } from '../popup-grid/popup-grid.component';
 
 export interface RowData {
   name: string;
@@ -21,7 +23,7 @@ export class GridComponent {
   };
   isFormVisible: boolean = false;
 
-  constructor() {
+  constructor(private dialog: MatDialog) {
     this.dataSource = new MatTableDataSource<RowData>([]);
   }
 
@@ -47,5 +49,21 @@ export class GridComponent {
   deleteRow(index: number) {
     this.dataSource.data.splice(index, 1);
     this.dataSource.data = [...this.dataSource.data];
+  }
+  openPopupGrid() {
+    const dialogRef = this.dialog.open(PopupGridComponent, {
+      width: '400px',
+      height: '300px',
+      data: this.newRow.name
+    });
+
+    dialogRef.afterClosed().subscribe((result: string) => {
+      if (result) {
+        this.newRow.name = result;
+      }
+    });
+  }
+  onOptionSelected(row: RowData, event: any) {
+    row.name = event.option.value;
   }
 }

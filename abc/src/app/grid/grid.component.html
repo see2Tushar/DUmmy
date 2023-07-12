@@ -48,6 +48,7 @@
 
 <!-- Input form -->
 <form *ngIf="isFormVisible">
+  <p (click)="openPopupGrid()">Add Rank</p>
   <mat-form-field>
     <input matInput placeholder="Name" [(ngModel)]="newRow.name" name="name">
   </mat-form-field>
