@@ -1,0 +1,60 @@
+<mat-table [dataSource]="dataSource">
+  <!-- Grid columns -->
+  <ng-container matColumnDef="name">
+    <mat-header-cell *matHeaderCellDef>Name</mat-header-cell>
+    <mat-cell *matCellDef="let element">
+      <ng-container *ngIf="!element.isEdit">{{ element.name }}</ng-container>
+      <ng-container *ngIf="element.isEdit">
+        <input class="styl" matInput [(ngModel)]="element.name" name="name" (keyup.enter)="saveRow(element)" (blur)="saveRow(element)">
+      </ng-container>
+    </mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="age">
+    <mat-header-cell *matHeaderCellDef>Age</mat-header-cell>
+    <mat-cell *matCellDef="let element">
+      <ng-container *ngIf="!element.isEdit">{{ element.age }}</ng-container>
+      <ng-container *ngIf="element.isEdit">
+        <input  class="styl" matInput type="number" [(ngModel)]="element.age" name="age" (keyup.enter)="saveRow(element)" (blur)="saveRow(element)">
+      </ng-container>
+    </mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="actions">
+    <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+    <mat-cell *matCellDef="let element; let i = index">
+      <ng-container *ngIf="!element.isEdit">
+        <button mat-icon-button color="primary" (click)="editRow(element)">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" (click)="deleteRow(i)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="element.isEdit">
+        <button mat-icon-button color="primary" (click)="saveRow(element)">
+          <mat-icon>save</mat-icon>
+        </button>
+      </ng-container>
+    </mat-cell>
+  </ng-container>
+
+  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+</mat-table>
+
+<!-- Add button -->
+<button mat-raised-button color="primary" (click)="toggleFormVisibility()">
+  {{ isFormVisible ? 'Hide Form' : 'Add' }}
+</button>
+
+<!-- Input form -->
+<form *ngIf="isFormVisible">
+  <mat-form-field>
+    <input matInput placeholder="Name" [(ngModel)]="newRow.name" name="name">
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput placeholder="Age" [(ngModel)]="newRow.age" name="age">
+  </mat-form-field>
+
+  <button mat-raised-button color="primary" type="button" (click)="addRow()">Submit</button>
+</form>

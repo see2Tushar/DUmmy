@@ -1,0 +1,26 @@
+.mat-cell.edit-cell {
+  padding: 0 !important;
+  display: flex;
+  align-items: center;
+}
+
+.mat-cell.edit-cell .mat-form-field {
+  margin-bottom: 0;
+}
+
+.mat-cell.edit-cell .mat-form-field-wrapper {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.mat-cell.edit-cell .mat-input-element {
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.styl {
+  height: 44px;
+    border: none;
+    background: antiquewhite;
+}
